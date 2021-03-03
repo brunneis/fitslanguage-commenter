@@ -5,9 +5,6 @@ import logging
 import re
 from random import randint, sample
 
-teacher_name = 'Lucas'
-
-
 def get_comment(text, teacher_name):
     def get_random_sentence(sentences):
         return sentences[randint(0, len(sentences) - 1)]
@@ -88,8 +85,7 @@ session.headers.update(headers)
 session.post('https://www.fitslanguage.com/login',
              data=f"email={config['email']}&pass={config['password']}&entrar=Iniciar sesión")
 
-pages = 5
-for page in range(1, pages + 1):
+for page in range(1, int(config['pages']) + 1):
     response = session.get(f'https://www.fitslanguage.com/lessons/{page}')
 
     root = lxml.html.document_fromstring(response.content)
@@ -106,8 +102,8 @@ for page in range(1, pages + 1):
             ).split()[1]
 
         is_available = root.xpath("//input[@class='ui primary button']")
-        if is_available and class_teacher_name == teacher_name.lower():
-            comment = get_comment(text, teacher_name)
+        if is_available and class_teacher_name == config['teacher'].lower():
+            comment = get_comment(text, config['teacher'])
             print(f'[LINK] https://www.fitslanguage.com/lessons/view/{class_id}')
             print(f'[EVALUATION] {text}')
             print(f'[COMMENT] {comment}')

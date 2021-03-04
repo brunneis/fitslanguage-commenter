@@ -1,0 +1,16 @@
+version: "3.5"
+
+x-logging: &default-logging
+  options:
+    max-size: "10m"
+    max-file: "5"
+  driver: json-file
+
+services:
+  fitslanguage-commenter:
+    container_name: fitslanguage-commenter
+    image: brunneis/fitslanguage-commenter
+    volumes:
+      - ./config.yaml:/config.yaml:ro
+    logging: *default-logging
+    restart: always

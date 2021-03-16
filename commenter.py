@@ -5,6 +5,11 @@ import logging
 import re
 from random import randint, sample
 
+logging.getLogger().setLevel(logging.INFO)
+logging.basicConfig(format='%(asctime)-15s [%(levelname)s] %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
+
+
 def get_comment(text, teacher_name):
     def get_random_sentence(sentences):
         return sentences[randint(0, len(sentences) - 1)]
@@ -70,10 +75,6 @@ def get_comment(text, teacher_name):
     return comment.replace('’', '\'').strip()
 
 
-logging.getLogger().setLevel(logging.INFO)
-logging.basicConfig(format='%(asctime)-15s [%(levelname)s] %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
-
 with open('config.yaml', 'r') as input_file:
     config = yaml.safe_load(input_file)
 
@@ -104,12 +105,12 @@ for page in range(1, int(config['pages']) + 1):
         is_available = root.xpath("//input[@class='ui primary button']")
         if is_available and class_teacher_name == config['teacher'].lower():
             comment = get_comment(text, config['teacher'])
-            print(f'[LINK] https://www.fitslanguage.com/lessons/view/{class_id}')
-            print(f'[EVALUATION] {text}')
-            print(f'[COMMENT] {comment}')
+            logging.info(f'[LINK] https://www.fitslanguage.com/lessons/view/{class_id}')
+            logging.info(f'[EVALUATION] {text}')
+            logging.info(f'[COMMENT] {comment}')
             response = session.post(
                 'https://www.fitslanguage.com/lessons/rate',
                 data=
                 f'classID={class_id}&rate_1=5&rate_2=5&rate_3=5&rate_4=5&rate_5=5&rate_6=5&comment={comment}&saverate=Evaluar'
             )
-            print(f'[RESULT] [{response.status_code}]\n')
+            logging.info(f'[RESULT] [{response.status_code}]\n')
